@@ -1,0 +1,32 @@
+services:
+  postgres:
+    image: 'postgres'
+    container_name: 'postgres-pix'
+    environment:
+      - 'POSTGRES_DB=pix-db'
+      - 'POSTGRES_PASSWORD=postgres'
+      - 'POSTGRES_USER=tester'
+    ports:
+      - '5432:5432'
+
+  zookeeper:
+    image: 'wurstmeister/zookeeper'
+    container_name: 'zookeeper-pix'
+    ports:
+      - '2181:2181'
+    environment:
+      - 'ZOOKEEPER_CLIENT_PORT: 2181'
+      - 'ZOOKEEPER_TICK_TIME: 2000'
+
+  kafka:
+    image: 'wurstmeister/kafka'
+    container_name: 'kafka-pix'
+    depends_on:
+      - zookeeper
+    ports:
+      - '9101:9101'  # JMX
+      - '9092:9092'  # Kafka
+    environment:
+       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+       KAFKA_ADVERTISED_HOST_NAME: localhost
+
